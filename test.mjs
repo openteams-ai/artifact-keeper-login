@@ -65,8 +65,8 @@ test("exchanges the job's OIDC token for an Artifact Keeper token", async () => 
     { method: "POST", url: "/api/v1/auth/ci/token", auth: "Bearer github-oidc-token" },
   ]);
   assert.match(stdout, /^::add-mask::ak-token$/m);
-  assert.match(outputs, /^token<<.+\nak-token\n.+$/m);
-  assert.match(outputs, /^username<<.+\nsvc-example\n.+$/m);
+  assert.match(outputs, /^token<<.+\r?\nak-token\r?$/m);
+  assert.match(outputs, /^username<<.+\r?\nsvc-example\r?$/m);
 });
 
 test("asks GitHub for the audience input when given", async () => {
