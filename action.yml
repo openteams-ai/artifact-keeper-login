@@ -1,0 +1,23 @@
+name: Artifact Keeper login
+description: Log in to Artifact Keeper from GitHub Actions without a stored secret, using the job's GitHub OIDC token.
+branding:
+  icon: lock
+  color: blue
+
+inputs:
+  url:
+    description: Artifact Keeper base URL, e.g. https://artifacts.example.com
+    required: true
+  audience:
+    description: Audience to request in the GitHub OIDC token. Must match the audience of the Artifact Keeper CI OIDC provider. Defaults to url.
+    required: false
+
+outputs:
+  token:
+    description: Short-lived Artifact Keeper access token (masked in logs).
+  username:
+    description: The Artifact Keeper service account the token belongs to.
+
+runs:
+  using: node24
+  main: index.js
