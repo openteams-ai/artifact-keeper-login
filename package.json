@@ -1,0 +1,16 @@
+{
+  "name": "artifact-keeper-login",
+  "private": true,
+  "type": "module",
+  "description": "GitHub Action: log in to Artifact Keeper without a stored secret, using GitHub OIDC",
+  "scripts": {
+    "build": "ncc build src/index.js --out dist --license licenses.txt",
+    "test": "node --test test.mjs"
+  },
+  "dependencies": {
+    "@actions/core": "3.0.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "0.45.0"
+  }
+}

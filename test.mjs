@@ -2,7 +2,7 @@
 // Artifact Keeper. Run with: node --test
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -29,10 +29,12 @@ function stub(exchangeStatus) {
 
 async function runAction(exchangeStatus, inputs = {}) {
   const { server, requests, base } = await stub(exchangeStatus);
+  // The runner creates the $GITHUB_OUTPUT file before the step starts.
   const output = join(mkdtempSync(join(tmpdir(), "ak-login-")), "output");
+  writeFileSync(output, "");
   // Not spawnSync: that would block the stub server in this process.
   const result = await new Promise((resolve) => {
-    const child = spawn(process.execPath, ["index.js"], {
+    const child = spawn(process.execPath, ["dist/index.js"], {
       env: {
         PATH: process.env.PATH,
         ACTIONS_ID_TOKEN_REQUEST_URL: `${base}/oidc?api-version=2.0`,
@@ -47,11 +49,7 @@ async function runAction(exchangeStatus, inputs = {}) {
     child.on("close", (status) => resolve({ status, stdout }));
   });
   server.close();
-  let outputs = "";
-  try {
-    outputs = readFileSync(output, "utf8");
-  } catch {}
-  return { ...result, requests, outputs, base };
+  return { ...result, requests, outputs: readFileSync(output, "utf8"), base };
 }
 
 test("exchanges the job's OIDC token for an Artifact Keeper token", async () => {
@@ -87,7 +85,7 @@ test("fails with Artifact Keeper's answer when the exchange is refused", async (
 });
 
 test("fails clearly without id-token: write", () => {
-  const result = spawnSync(process.execPath, ["index.js"], {
+  const result = spawnSync(process.execPath, ["dist/index.js"], {
     env: { PATH: process.env.PATH, INPUT_URL: "https://ak.example.com" },
     encoding: "utf8",
   });

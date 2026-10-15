@@ -36,4 +36,6 @@ On the Artifact Keeper side, an admin creates a GitHub CI OIDC provider
 (issuer `https://token.actions.githubusercontent.com`, audience as above) and a
 mapping whose claim filters admit the job.
 
-No dependencies: the action uses only Node's built-ins. Tests: `node --test`.
+Built on GitHub's `@actions/core`. `dist/index.js` is the bundled action
+(`npm ci --ignore-scripts && npm run build`); CI fails if it does not match
+`src/`. Tests: `npm test`.
